@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os"
 )
 
@@ -62,7 +63,12 @@ func main() {
 		SetPrefix(config, fullPath)
 	case "sh":
 		RunParallel(Sh, config.Repos, os.Args[2:]...)
-
+	default:
+		args := ""
+		for _, arg := range os.Args[1:] {
+			args += arg
+		}
+		log.Println("Unknown command:", args)
 	}
 
 	SaveConfig(config)

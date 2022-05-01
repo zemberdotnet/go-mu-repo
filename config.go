@@ -2,8 +2,10 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"io/ioutil"
 	"log"
+	"os"
 )
 
 type Config struct {
@@ -12,6 +14,12 @@ type Config struct {
 }
 
 func LoadConfig() (*Config, error) {
+	// if we don't have config file, return empty config
+	if _, err := os.Stat(".gum"); errors.Is(err, os.ErrNotExist) {
+		return &Config{}, nil
+	}
+
+	// if we do have config file, load it
 	f, err := ioutil.ReadFile(".gum")
 	if err != nil {
 		return nil, err
