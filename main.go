@@ -14,7 +14,7 @@ func main() {
 	switch os.Args[1] {
 	case "clone":
 		// TODO check the args len
-		RunParallel(Clone, []string{os.Args[2]}, os.Args[3:]...)
+		RunParallel(Clone, []string{config.Prefix + os.Args[2]}, os.Args[3:]...)
 	case "checkout":
 		// TODO make a function to handle running parallel/serial and args
 		if len(os.Args) < 3 {

@@ -1,43 +1,38 @@
 package main
 
 import (
-	"bufio"
+	"encoding/json"
+	"io/ioutil"
 	"log"
-	"os"
 )
 
 type Config struct {
-	Repos []string
+	Prefix string
+	Repos  []string
 }
 
 func LoadConfig() (*Config, error) {
-	f, err := os.OpenFile(".gum", os.O_APPEND|os.O_CREATE|os.O_RDWR, 0644)
+	f, err := ioutil.ReadFile(".gum")
 	if err != nil {
 		return nil, err
 	}
 
-	config := &Config{}
+	var config Config
 
-	scanner := bufio.NewScanner(f)
+	err = json.Unmarshal(f, &config)
 
-	for scanner.Scan() {
-		config.Repos = append(config.Repos, scanner.Text())
+	if err != nil {
+		return nil, err
 	}
-	return config, nil
+
+	return &config, nil
 }
 
 func SaveConfig(config *Config) error {
-	f, err := os.Create(".gum")
+	f, err := json.MarshalIndent(config, "", " ")
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	for _, repo := range config.Repos {
-		_, err = f.WriteString(repo + "\n")
-		if err != nil {
-			// TODO Return error
-			log.Fatal(err)
-		}
-	}
-	return nil
+	return ioutil.WriteFile(".gum", f, 0644)
 }

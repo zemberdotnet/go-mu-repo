@@ -13,3 +13,4 @@
     - `unregister`
     - `checkout`
     - `pull`
+    - `prefix`
