@@ -16,6 +16,7 @@ func main() {
 		// TODO check the args len
 		RunParallel(Clone, []string{os.Args[2]}, os.Args[3:]...)
 	case "checkout":
+		// TODO make a function to handle running parallel/serial and args
 		if len(os.Args) < 3 {
 			RunParallel(Checkout, config.Repos)
 		} else {
@@ -39,7 +40,12 @@ func main() {
 		} else {
 			RunParallel(Commit, config.Repos, os.Args[2:]...)
 		}
-
+	case "push":
+		if len(os.Args) < 3 {
+			RunParallel(Push, config.Repos)
+		} else {
+			RunParallel(Push, config.Repos, os.Args[2:]...)
+		}
 	case "status":
 		RunParallel(Status, config.Repos)
 

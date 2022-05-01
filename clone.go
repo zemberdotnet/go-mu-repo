@@ -11,7 +11,5 @@ func Clone(repo string, args ...string) error {
 	cmd := exec.Command("git", args...)
 	cmd.Stdout = os.Stdout
 
-	err := cmd.Run()
-
-	return err
+	return cmd.Run()
 }
