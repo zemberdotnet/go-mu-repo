@@ -55,7 +55,11 @@ func main() {
 	case "unregister":
 		Unregister(config, os.Args[2])
 	case "prefix":
-		SetPrefix(config, os.Args[2])
+		fullPath := ""
+		for _, arg := range os.Args[2:] {
+			fullPath += arg
+		}
+		SetPrefix(config, fullPath)
 	case "sh":
 		RunParallel(Sh, config.Repos, os.Args[2:]...)
 
