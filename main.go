@@ -54,6 +54,8 @@ func main() {
 
 	case "unregister":
 		Unregister(config, os.Args[2])
+	case "prefix":
+		SetPrefix(config, os.Args[2])
 	case "sh":
 		RunParallel(Sh, config.Repos, os.Args[2:]...)
 
