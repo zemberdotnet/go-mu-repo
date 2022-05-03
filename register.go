@@ -1,22 +1,26 @@
 package main
 
 // Register registers the given repo in the config file
-func Register(config *Config, repo string) {
-	for _, r := range config.Repos {
+func Register(repos *[]string, repo string) {
+	for _, r := range *repos {
 		if r == repo {
 			return
 		}
 	}
 
-	config.Repos = append(config.Repos, repo)
+	*repos = append(*repos, repo)
 }
 
-func Unregister(config *Config, repo string) {
-	updated := []string{}
-	for _, r := range config.Repos {
+func Unregister(repos *[]string, repo string) {
+	unregistered := []string{}
+	for _, r := range *repos {
 		if r != repo {
-			updated = append(updated, r)
+			unregistered = append(unregistered, r)
 		}
 	}
-	config.Repos = updated
+	*repos = unregistered
+}
+
+func UnregisterAll(repos *[]string) {
+	*repos = []string{}
 }

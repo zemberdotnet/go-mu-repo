@@ -19,42 +19,44 @@ func main() {
 	case "checkout":
 		// TODO make a function to handle running parallel/serial and args
 		if len(os.Args) < 3 {
-			RunParallel(Checkout, config.Repos)
+			RunParallel(Checkout, config.ActiveGroup())
 		} else {
-			RunParallel(Checkout, config.Repos, os.Args[2:]...)
+			RunParallel(Checkout, config.ActiveGroup(), os.Args[2:]...)
 		}
 	case "pull":
 		if len(os.Args) < 3 {
-			RunParallel(Pull, config.Repos)
+			RunParallel(Pull, config.ActiveGroup())
 		} else {
-			RunParallel(Pull, config.Repos, os.Args[2:]...)
+			RunParallel(Pull, config.ActiveGroup(), os.Args[2:]...)
 		}
 	case "add":
 		if len(os.Args) < 3 {
-			RunParallel(Add, config.Repos)
+			RunParallel(Add, config.ActiveGroup())
 		} else {
-			RunParallel(Add, config.Repos, os.Args[2:]...)
+			RunParallel(Add, config.ActiveGroup(), os.Args[2:]...)
 		}
 	case "commit":
 		if len(os.Args) < 3 {
-			RunParallel(Commit, config.Repos)
+			RunParallel(Commit, config.ActiveGroup())
 		} else {
-			RunParallel(Commit, config.Repos, os.Args[2:]...)
+			RunParallel(Commit, config.ActiveGroup(), os.Args[2:]...)
 		}
 	case "push":
 		if len(os.Args) < 3 {
-			RunParallel(Push, config.Repos)
+			RunParallel(Push, config.ActiveGroup())
 		} else {
-			RunParallel(Push, config.Repos, os.Args[2:]...)
+			RunParallel(Push, config.ActiveGroup(), os.Args[2:]...)
 		}
 	case "status":
-		RunParallel(Status, config.Repos)
+		RunParallel(Status, config.ActiveGroup())
 
 	case "register":
-		Register(config, os.Args[2])
+		config.Register(os.Args[2])
 
 	case "unregister":
-		Unregister(config, os.Args[2])
+		config.Unregister(os.Args[2])
+	case "group":
+		config.SetGroup(os.Args[2])
 	case "prefix":
 		fullPath := ""
 		for _, arg := range os.Args[2:] {
@@ -62,7 +64,7 @@ func main() {
 		}
 		SetPrefix(config, fullPath)
 	case "sh":
-		RunParallel(Sh, config.Repos, os.Args[2:]...)
+		RunParallel(Sh, config.ActiveGroup(), os.Args[2:]...)
 	default:
 		args := ""
 		for _, arg := range os.Args[1:] {

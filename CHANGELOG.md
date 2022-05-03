@@ -3,6 +3,7 @@
 ## [Unreleased]
 
 ## Added
+    - `group`
     - `clone`
     - `commit`
     - `add`
