@@ -47,35 +47,58 @@ func LoadConfig() (*Config, error) {
 	return &config, nil
 }
 
-func (c *Config) SetGroup(group string) {
-	c.CurrentGroup = group
+func (c *Config) SetGroup(cmdOpts CommandOptions) error {
+	c.CurrentGroup = cmdOpts.target
+	return nil
 }
 
-func (c *Config) SetPrefix(prefix string) {
-	c.Prefix = prefix
+func (c *Config) SetPrefix(cmdOpts CommandOptions) error {
+	c.Prefix = cmdOpts.target
+	return nil
 }
 
 func (c *Config) ActiveGroup() []string {
 	return c.Groups[c.CurrentGroup]
 }
 
-func (c *Config) Register(repo string) {
+func (c *Config) Register(cmdOpts CommandOptions) error {
 	for _, r := range c.ActiveGroup() {
-		if r == repo {
-			return
+		if r == cmdOpts.target {
+			return nil
 		}
 	}
-	c.Groups[c.CurrentGroup] = append(c.Groups[c.CurrentGroup], repo)
+	c.Groups[c.CurrentGroup] = append(c.Groups[c.CurrentGroup], cmdOpts.target)
+	return nil
 }
 
-func (c *Config) Unregister(repo string) {
+func (c *Config) Unregister(cmdOpts CommandOptions) error {
 	unregistered := []string{}
 	for _, r := range c.ActiveGroup() {
-		if r != repo {
+		if r != cmdOpts.target {
 			unregistered = append(unregistered, r)
 		}
 	}
 	c.Groups[c.CurrentGroup] = unregistered
+	return nil
+}
+
+func (c *Config) List(cmdOpts CommandOptions) error {
+	for _, r := range c.ActiveGroup() {
+		fmt.Println(r)
+	}
+	return nil
+}
+
+func (c *Config) Make(cmdOpts CommandOptions) error {
+	if _, err := os.Stat(cmdOpts.target); os.IsNotExist(err) {
+		Clone(CommandOptions{
+			target: c.Prefix + cmdOpts.target,
+			args:   cmdOpts.args,
+			Stdout: cmdOpts.Stdout,
+			Stderr: cmdOpts.Stderr,
+		})
+	}
+	return nil
 }
 
 func (c *Config) UnregisterAll() {
