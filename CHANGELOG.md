@@ -15,3 +15,4 @@
     - `checkout`
     - `pull`
     - `prefix`
+    - `make`

@@ -1,18 +1,34 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"log"
 	"os"
 )
 
+var helpFlag = flag.Bool("help", false, "print help message")
+
 func main() {
+	flag.Parse()
+	if *helpFlag {
+		PrintUsage()
+		os.Exit(0)
+	}
+
 	config, err := LoadConfig()
 	if err != nil {
 		fmt.Println(err)
 	}
 
-	switch os.Args[1] {
+	if len(os.Args) < 2 {
+		// should provide command
+		return
+	}
+
+	cmd := os.Args[1]
+
+	switch cmd {
 	case "clone":
 		// TODO check the args len
 		RunParallel(Clone, []string{config.Prefix + os.Args[2]}, os.Args[3:]...)
@@ -22,6 +38,12 @@ func main() {
 			RunParallel(Checkout, config.ActiveGroup())
 		} else {
 			RunParallel(Checkout, config.ActiveGroup(), os.Args[2:]...)
+		}
+	case "switch":
+		if len(os.Args) < 3 {
+			RunParallel(Switch, config.ActiveGroup())
+		} else {
+			RunParallel(Switch, config.ActiveGroup(), os.Args[2:]...)
 		}
 	case "pull":
 		if len(os.Args) < 3 {
@@ -65,6 +87,9 @@ func main() {
 		SetPrefix(config, fullPath)
 	case "sh":
 		RunParallel(Sh, config.ActiveGroup(), os.Args[2:]...)
+	case "make":
+		RunParallel(config.Make, config.ActiveGroup())
+
 	default:
 		args := ""
 		for _, arg := range os.Args[1:] {
