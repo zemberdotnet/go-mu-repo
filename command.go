@@ -24,6 +24,7 @@ var CommandNameMap = map[string]Command{
 	"status":   Status,
 	"switch":   Switch,
 	"sh":       Sh,
+	"stash":    Stash,
 }
 
 var ErrUnknownCommand = fmt.Errorf("unknown command")
@@ -119,6 +120,13 @@ func Status(c CommandOptions) error {
 
 func Switch(c CommandOptions) error {
 	args := append([]string{"switch"}, c.args...)
+	cmd := CreateCommandWithOuts("git", args...)
+	cmd.Dir = ResolveRepoPath(c.target)
+	return cmd.Run()
+}
+
+func Stash(c CommandOptions) error {
+	args := append([]string{"stash"}, c.args...)
 	cmd := CreateCommandWithOuts("git", args...)
 	cmd.Dir = ResolveRepoPath(c.target)
 	return cmd.Run()
