@@ -86,7 +86,7 @@ func Pull(c CommandOptions) error {
 }
 
 func Push(c CommandOptions) error {
-	args := append([]string{"Push"}, c.args...)
+	args := append([]string{"push"}, c.args...)
 	cmd := CreateCommandWithOuts("git", args...)
 	cmd.Dir = ResolveRepoPath(c.target)
 
