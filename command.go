@@ -63,14 +63,16 @@ func ResolveCommand(cmd string, config *Config) (Command, error) {
 // Clone runs the git clone command for the given repo
 func Clone(c CommandOptions) error {
 	args := append([]string{"clone", c.target}, c.args...)
-	cmd := CreateCommandWithOuts("git", args...)
+	cmd := CreateCommand("git", args...)
+	AddOutsToCommand(cmd, c.Stdout, c.Stderr)
 
 	return cmd.Run()
 }
 
 func Commit(c CommandOptions) error {
 	args := append([]string{"commit"}, c.args...)
-	cmd := CreateCommandWithOuts("git", args...)
+	cmd := CreateCommand("git", args...)
+	AddOutsToCommand(cmd, c.Stdout, c.Stderr)
 	cmd.Dir = ResolveRepoPath(c.target)
 
 	return cmd.Run()
@@ -79,24 +81,27 @@ func Commit(c CommandOptions) error {
 // Pull runs the git pull command for the given repo
 func Pull(c CommandOptions) error {
 	args := append([]string{"pull"}, c.args...)
-	cmd := CreateCommandWithOuts("git", args...)
+	cmd := CreateCommand("git", args...)
 	cmd.Dir = ResolveRepoPath(c.target)
+	AddOutsToCommand(cmd, c.Stdout, c.Stderr)
 
 	return cmd.Run()
 }
 
 func Push(c CommandOptions) error {
 	args := append([]string{"push"}, c.args...)
-	cmd := CreateCommandWithOuts("git", args...)
+	cmd := CreateCommand("git", args...)
 	cmd.Dir = ResolveRepoPath(c.target)
+	AddOutsToCommand(cmd, c.Stdout, c.Stderr)
 
 	return cmd.Run()
 }
 
 func Checkout(c CommandOptions) error {
 	args := append([]string{"checkout"}, c.args...)
-	cmd := CreateCommandWithOuts("git", args...)
+	cmd := CreateCommand("git", args...)
 	cmd.Dir = ResolveRepoPath(c.target)
+	AddOutsToCommand(cmd, c.Stdout, c.Stderr)
 
 	return cmd.Run()
 }
@@ -104,8 +109,9 @@ func Checkout(c CommandOptions) error {
 func Add(c CommandOptions) error {
 	args := append([]string{"add"}, c.args...)
 
-	cmd := CreateCommandWithOuts("git", args...)
+	cmd := CreateCommand("git", args...)
 	cmd.Dir = ResolveRepoPath(c.target)
+	AddOutsToCommand(cmd, c.Stdout, c.Stderr)
 
 	return cmd.Run()
 
@@ -113,28 +119,35 @@ func Add(c CommandOptions) error {
 
 func Status(c CommandOptions) error {
 	args := append([]string{"status"}, c.args...)
-	cmd := CreateCommandWithOuts("git", args...)
+	cmd := CreateCommand("git", args...)
 	cmd.Dir = ResolveRepoPath(c.target)
+	AddOutsToCommand(cmd, c.Stdout, c.Stderr)
+
 	return cmd.Run()
 }
 
 func Switch(c CommandOptions) error {
 	args := append([]string{"switch"}, c.args...)
-	cmd := CreateCommandWithOuts("git", args...)
+	cmd := CreateCommand("git", args...)
 	cmd.Dir = ResolveRepoPath(c.target)
+	AddOutsToCommand(cmd, c.Stdout, c.Stderr)
+
 	return cmd.Run()
 }
 
 func Stash(c CommandOptions) error {
 	args := append([]string{"stash"}, c.args...)
-	cmd := CreateCommandWithOuts("git", args...)
+	cmd := CreateCommand("git", args...)
 	cmd.Dir = ResolveRepoPath(c.target)
+	AddOutsToCommand(cmd, c.Stdout, c.Stderr)
+
 	return cmd.Run()
 }
 
 func Sh(c CommandOptions) error {
-	cmd := CreateCommandWithOuts(c.args[0], c.args[1:]...)
+	cmd := CreateCommand(c.args[0], c.args[1:]...)
 	cmd.Dir = ResolveRepoPath(c.target)
+	AddOutsToCommand(cmd, c.Stdout, c.Stderr)
 
 	return cmd.Run()
 }

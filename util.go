@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"io"
 	"log"
 	"os"
 	"os/exec"
@@ -15,11 +16,14 @@ func ResolveRepoPath(repo string) string {
 	return pwd + "/" + repo
 }
 
-func CreateCommandWithOuts(name string, args ...string) *exec.Cmd {
+func CreateCommand(name string, args ...string) *exec.Cmd {
 	cmd := exec.Command(name, args...)
-	cmd.Stderr = os.Stderr
-	cmd.Stdout = os.Stdout
 	return cmd
+}
+
+func AddOutsToCommand(cmd *exec.Cmd, stdout io.Writer, stderr io.Writer) {
+	cmd.Stdout = stdout
+	cmd.Stderr = stderr
 }
 
 func PrintUsage() {

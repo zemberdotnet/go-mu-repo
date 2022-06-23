@@ -19,10 +19,15 @@ func main() {
 	config, err := LoadConfig()
 	if err != nil {
 		fmt.Println(err)
-		SaveConfig(config)
+		os.Exit(1)
 	}
 
 	if len(os.Args) < 2 {
+		err = SaveConfig(config)
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
 		// should provide command
 		return
 	}

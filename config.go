@@ -26,7 +26,7 @@ var DefaultConfig = Config{
 func LoadConfig() (*Config, error) {
 	// if we don't have config file, return empty config
 	if _, err := os.Stat(".gum"); errors.Is(err, os.ErrNotExist) {
-		fmt.Println("No config file found, using default config")
+		fmt.Println("No config file found, generating default config")
 		return &DefaultConfig, nil
 	}
 
