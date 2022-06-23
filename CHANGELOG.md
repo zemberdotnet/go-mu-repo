@@ -16,3 +16,4 @@
     - `pull`
     - `prefix`
     - `make`
+    - `stash`

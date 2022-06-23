@@ -1,0 +1,6 @@
+- deal with data race in runner writers
+- handle *exec.Error when missing executable in path
+- return strings from Flush
+- serialize output to valid json object
+- improve writer output patterns
+- add tests :)
