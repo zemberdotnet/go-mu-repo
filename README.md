@@ -23,6 +23,8 @@ Gum is a tool for managing many git repositories at once.
   - adds a local repo to the current group
 - unregister
   - removes a local repo from the current group
+- list
+  - shows the list of repos in the current group
 
 ### Git Commands
 - clone

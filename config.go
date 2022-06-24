@@ -84,7 +84,7 @@ func (c *Config) Unregister(cmdOpts CommandOptions) error {
 
 func (c *Config) List(cmdOpts CommandOptions) error {
 	for _, r := range c.ActiveGroup() {
-		fmt.Println(r)
+		fmt.Fprintln(os.Stdout, r)
 	}
 	return nil
 }

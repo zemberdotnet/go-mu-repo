@@ -2,7 +2,6 @@ package main
 
 import (
 	"os"
-	"os/exec"
 	"sync"
 )
 
@@ -23,15 +22,15 @@ func Run(r *RunOptions) error {
 
 func RunSingleton(fn Command, repos []string, args ...string) error {
 
-	writers := make([]*OutputWriter, 0, len(repos))
+	owc := NewOutputWriterCollection()
 	for _, repo := range repos {
 		// We should copy the args
 		// so we don't modify the original
 		argsCpy := make([]string, len(args))
 		copy(argsCpy, args)
 
-		writer := NewOuputWriter(repo)
-		writers = append(writers, writer)
+		writer := CreateOutputWriter(repo)
+		owc.Add(writer)
 
 		c := CommandOptions{
 			target: repo,
@@ -40,7 +39,8 @@ func RunSingleton(fn Command, repos []string, args ...string) error {
 			Stderr: os.Stderr,
 		}
 
-		err := fn(c)
+		fn(c)
+		/* TODO: Renable error capturing
 		if err != nil {
 			switch err := err.(type) {
 			case *exec.ExitError:
@@ -50,12 +50,10 @@ func RunSingleton(fn Command, repos []string, args ...string) error {
 				// TODO: Handle execErrors
 			}
 		}
-
+		*/
 	}
 
-	for _, writer := range writers {
-		writer.Flush()
-	}
+	owc.Flush()
 
 	return nil
 }
@@ -64,7 +62,7 @@ func RunParallel(fn Command, repos []string, args ...string) error {
 
 	wg := &sync.WaitGroup{}
 
-	writers := make([]*OutputWriter, 0, len(repos))
+	owc := NewOutputWriterCollection()
 	for _, repo := range repos {
 		// Variables change inside the for range so we need to copy them
 		repocpy := repo
@@ -72,9 +70,8 @@ func RunParallel(fn Command, repos []string, args ...string) error {
 		copy(argsCpy, args)
 		wg.Add(1)
 		go func() {
-			// TODO: This is a data race!!!
-			writer := NewOuputWriter(repocpy)
-			writers = append(writers, writer)
+			writer := CreateOutputWriter(repocpy)
+			owc.Add(writer)
 
 			c := CommandOptions{
 				target: repocpy,
@@ -83,26 +80,26 @@ func RunParallel(fn Command, repos []string, args ...string) error {
 				Stderr: os.Stderr,
 			}
 
-			err := fn(c)
-			// TODO: maybe improve the way exit codes are assigned
-			if err != nil {
-				switch err := err.(type) {
-				case *exec.ExitError:
-					exitCode := err.ExitCode()
-					writer.exitCode = exitCode
-				case *exec.Error:
-					// TODO: Handle execErrors
+			fn(c)
+			// TODO: Renable error capturing
+			/*
+				if err != nil {
+					switch err := err.(type) {
+					case *exec.ExitError:
+						exitCode := err.ExitCode()
+						writer.exitCode = exitCode
+					case *exec.Error:
+						// TODO: Handle execErrors
+					}
 				}
-			}
+			*/
 			wg.Done()
 		}()
 	}
 
 	wg.Wait()
 
-	for _, writer := range writers {
-		writer.Flush()
-	}
+	owc.Flush()
 
 	return nil
 }

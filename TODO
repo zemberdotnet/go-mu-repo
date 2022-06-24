@@ -1,6 +1,8 @@
-- deal with data race in runner writers
 - handle *exec.Error when missing executable in path
-- return strings from Flush
 - serialize output to valid json object
+    - sorta there writer not good tho
 - improve writer output patterns
+    - how can we write json when needed?
 - add tests :)
+- list command is broken with current output
+- renable error capturing in runners

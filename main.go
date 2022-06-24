@@ -8,6 +8,7 @@ import (
 )
 
 var helpFlag = flag.Bool("help", false, "print help message")
+var JsonFlag = flag.Bool("json", false, "print command output in JSON format")
 
 func main() {
 	flag.Parse()
