@@ -10,14 +10,30 @@ type RunOptions struct {
 	targets  []string
 	args     []string
 	parallel bool
+	once     bool
 }
 
 func Run(r *RunOptions) error {
+	if r.once {
+		return RunOnce(r.fn)
+	}
+
 	if r.parallel {
 		return RunParallel(r.fn, r.targets, r.args...)
 	} else {
 		return RunSingleton(r.fn, r.targets, r.args...)
 	}
+}
+
+func RunOnce(fn Command) error {
+	c := CommandOptions{
+		target: "",
+		args:   []string{},
+		Stdout: os.Stdout,
+		Stderr: os.Stderr,
+	}
+
+	return fn(c)
 }
 
 func RunSingleton(fn Command, repos []string, args ...string) error {

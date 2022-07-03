@@ -14,7 +14,26 @@ type CommandOptions struct {
 	Stderr io.Writer
 }
 
-var CommandNameMap = map[string]Command{
+var CommandNames = []string{
+	"clone",
+	"commit",
+	"pull",
+	"push",
+	"checkout",
+	"add",
+	"status",
+	"switch",
+	"sh",
+	"stash",
+	"register",
+	"unregister",
+	"make",
+	"group",
+	"prefix",
+	"list",
+}
+
+var NameCommandMap = map[string]Command{
 	"clone":    Clone,
 	"commit":   Commit,
 	"pull":     Pull,
@@ -38,7 +57,7 @@ func CommandHasCLIBasedTarget(cmd string) bool {
 // ResolveCommand resolves the command name to a command function
 // or returns ErrUnknownCommand if the command is not found
 func ResolveCommand(cmd string, config *Config) (Command, error) {
-	if c, ok := CommandNameMap[cmd]; ok {
+	if c, ok := NameCommandMap[cmd]; ok {
 		return c, nil
 	}
 

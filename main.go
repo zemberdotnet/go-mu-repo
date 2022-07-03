@@ -1,25 +1,25 @@
 package main
 
 import (
-	"flag"
 	"fmt"
 	"log"
 	"os"
 )
 
-var helpFlag = flag.Bool("help", false, "print help message")
-var JsonFlag = flag.Bool("json", false, "print command output in JSON format")
+var JsonFlag = false
+var DebugFlag = false
 
 func main() {
-	flag.Parse()
-	if *helpFlag {
-		PrintUsage()
-		os.Exit(0)
-	}
 
 	config, err := LoadConfig()
 	if err != nil {
 		fmt.Println(err)
+		os.Exit(1)
+	}
+
+	cmdName, args, err := ParseInput()
+	if err != nil {
+		PrintUsage()
 		os.Exit(1)
 	}
 
@@ -33,16 +33,13 @@ func main() {
 		return
 	}
 
-	cmdName := os.Args[1]
-
 	cmd, err := ResolveCommand(cmdName, config)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	var args = []string{}
-	if len(os.Args) > 2 {
-		args = os.Args[2:]
+	if DebugFlag {
+		fmt.Printf("[Command: %v]\n[Args: %v]\n", cmdName, args)
 	}
 
 	runOpts := &RunOptions{
@@ -54,13 +51,18 @@ func main() {
 	// The command either targets the active group or a cli specified target
 	if CommandHasCLIBasedTarget(cmdName) {
 		if cmdName == "clone" {
-			runOpts.targets = []string{config.Prefix + os.Args[2]}
+			for _, arg := range args {
+				runOpts.targets = append(runOpts.targets, config.Prefix+arg)
+			}
 		} else {
-			runOpts.targets = []string{os.Args[2]}
+			runOpts.targets = args
 		}
-
 	} else {
 		runOpts.targets = config.ActiveGroup()
+	}
+
+	if cmdName == "list" {
+		runOpts.once = true
 	}
 
 	Run(runOpts)

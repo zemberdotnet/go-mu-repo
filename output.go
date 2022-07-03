@@ -34,7 +34,7 @@ func (owc *OutputWriterCollection) Add(ow OutputWriter) {
 // Flush flushes the OutputWriters to Stdout
 func (owc *OutputWriterCollection) Flush() error {
 
-	if *JsonFlag {
+	if JsonFlag {
 		output := make([]json.RawMessage, 0)
 		for _, ow := range owc.writers {
 			flushed := json.RawMessage(ow.Flush())
@@ -61,7 +61,7 @@ type OutputWriter interface {
 }
 
 func CreateOutputWriter(target string) OutputWriter {
-	if *JsonFlag {
+	if JsonFlag {
 		return NewJsonOutputWriter(target)
 	} else {
 		return NewStdOutputWriter(target)
