@@ -8,6 +8,7 @@ import (
 
 var JsonFlag = false
 var DebugFlag = false
+var ParallelFlag = true
 
 func main() {
 
@@ -43,7 +44,7 @@ func main() {
 	}
 
 	runOpts := &RunOptions{
-		parallel: true,
+		parallel: ParallelFlag,
 		fn:       cmd,
 		args:     args,
 	}

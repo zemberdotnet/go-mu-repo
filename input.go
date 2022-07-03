@@ -28,6 +28,10 @@ func ParseInput() (string, []string, error) {
 			DebugFlag = true
 		}
 
+		if arg == "--no-parallel" {
+			ParallelFlag = false
+		}
+
 	}
 	return "", nil, fmt.Errorf("no command")
 }
