@@ -118,20 +118,40 @@ func (o *JsonOutputWriter) Write(p []byte) (n int, err error) {
 // Flush flushes the OutputWriter to a json.RawMessage
 func (o *JsonOutputWriter) Flush() []byte {
 	bytes := o.buf.Bytes()
-	s := struct {
-		Target   string `json:"target"`
-		Output   string `json:"output"`
-		ExitCode int    `json:"ExitCode"`
-	}{
-		Target:   o.target,
-		Output:   string(bytes),
-		ExitCode: o.exitCode,
-	}
+	c := map[string]interface{}{}
+	// We need to determine if the output is a JSON object or just bytes
+	err := json.Unmarshal(bytes, &c)
+	if err == nil {
+		s := struct {
+			Target   string          `json:"target"`
+			Output   json.RawMessage `json:"output"`
+			ExitCode int             `json:"exitCode"`
+		}{
+			Target:   o.target,
+			Output:   json.RawMessage(bytes),
+			ExitCode: o.exitCode,
+		}
+		buf, err := json.Marshal(s)
+		if err != nil {
+			log.Fatal(err)
+		}
+		return buf
 
-	buf, err := json.Marshal(s)
-	if err != nil {
-		log.Fatal(err)
+	} else {
+		s := struct {
+			Target   string `json:"target"`
+			Output   string `json:"output"`
+			ExitCode int    `json:"exitCode"`
+		}{
+			Target:   o.target,
+			Output:   string(bytes),
+			ExitCode: o.exitCode,
+		}
+
+		buf, err := json.Marshal(s)
+		if err != nil {
+			log.Fatal(err)
+		}
+		return buf
 	}
-	// TODO: Pointer instead?
-	return buf
 }
