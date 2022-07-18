@@ -31,6 +31,7 @@ var CommandNames = []string{
 	"group",
 	"prefix",
 	"list",
+	"reset",
 }
 
 var NameCommandMap = map[string]Command{
@@ -44,6 +45,7 @@ var NameCommandMap = map[string]Command{
 	"switch":   Switch,
 	"sh":       Sh,
 	"stash":    Stash,
+	"reset":    Reset,
 }
 
 var ErrUnknownCommand = fmt.Errorf("unknown command")
@@ -159,6 +161,14 @@ func Stash(c CommandOptions) error {
 	cmd := CreateCommand("git", args...)
 	cmd.Dir = ResolveRepoPath(c.target)
 	AddOutsToCommand(cmd, c.Stdout, c.Stderr)
+
+	return cmd.Run()
+}
+
+func Reset(c CommandOptions) error {
+	args := append([]string{"reset"}, c.args...)
+	cmd := CreateCommand("git", args...)
+	cmd.Dir = ResolveRepoPath(c.target)
 
 	return cmd.Run()
 }

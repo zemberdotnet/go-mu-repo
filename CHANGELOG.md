@@ -17,3 +17,4 @@
     - `prefix`
     - `make`
     - `stash`
+    - `reset`
